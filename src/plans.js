@@ -270,14 +270,14 @@ function insertVersion (schema, version) {
 }
 
 function fetchNextJob (schema) {
-  return (includeMetadata) => `
+  return (includeMetadata, order) => `
     WITH nextJob as (
       SELECT id
       FROM ${schema}.job
       WHERE state < '${states.active}'
-        AND name LIKE $1
+        AND name = $1
         AND startAfter < now()
-      ORDER BY priority desc, createdOn, id
+      ORDER BY ${order || 'priority desc, createdOn, id'}
       LIMIT $2
       FOR UPDATE SKIP LOCKED
     )
